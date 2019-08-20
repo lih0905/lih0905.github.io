@@ -25,7 +25,7 @@ url                      : "https://lih0905.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
-logo                     : https://avatars0.githubusercontent.com/u/13794983?v=4 # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
+logo                     : # https://avatars0.githubusercontent.com/u/13794983?v=4 # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
 masthead_title           : # overrides the website title displayed in the masthead, use " " for no title
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -108,14 +108,14 @@ analytics:
 # Site Author
 author:
   name             : "Inhwan Lee"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "about.jpg" 
   bio              : #"I am an **amazing** person."
   location         : #"Somewhere"
   email            : lih0905@gmail.com
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      url: mailto:lih0905@gmail.com
+      # url: mailto:lih0905@gmail.com
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://your-website.com"
