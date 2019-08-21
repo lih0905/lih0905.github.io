@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lih0905.github.io/sitemap.xml
