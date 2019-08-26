@@ -5,8 +5,8 @@ main:
   - title: "Categories"
     url: /category/
     
-  - title: "Tags"
-    url: /tags/
+ # - title: "Tags"
+  #  url: /tags/
   #  url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
 
   # - title: "Sample Posts"

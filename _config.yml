@@ -261,21 +261,10 @@ category_path: "category"
 category_layout: "category.html" 
 # <- default value
 
-collections:
-  tags:
-    output: true
-    permalink: /tags/:path/
 
-defaults:
-  - scope:
-      path: ''
-      type: tags
-    values:
-      layout: tag
-
-#tag_path: "tag" 
+tag_path: "tags" 
 # <- default value
-#tag_layout: "tags.html" 
+tag_layout: "tag.html" 
 # <- default value
 #category_archive:
 #  type: liquid
