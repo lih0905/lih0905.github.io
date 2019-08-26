@@ -266,7 +266,12 @@ collections:
     output: true
     permalink: /tags/:path/
 
-
+defaults:
+  - scope:
+      path: ''
+      type: tags
+    values:
+      layout: tag
 
 #tag_path: "tag" 
 # <- default value
