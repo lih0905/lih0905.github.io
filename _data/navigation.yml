@@ -6,7 +6,7 @@ main:
     url: /category/
     
   - title: "Tags"
-    url: /tag/
+    url: /tags/
   #  url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
 
   # - title: "Sample Posts"
