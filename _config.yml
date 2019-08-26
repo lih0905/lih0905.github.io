@@ -258,12 +258,15 @@ whitelist:
 
 category_path: "category" # <- default value
 category_layout: "category.html" # <- default value
+
+tag_path: "tag" # <- default value
+tag_layout: "tags.html" # <- default value
 #category_archive:
 #  type: liquid
 #  path: /category/
-tag_archive:
-  type: liquid
-  path: tag-archive.md
+#tag_archive:
+#  type: liquid
+#  path: tag-archive.md
 # https://github.com/jekyll/jekyll-archives
 # jekyll-archives:
 #   enabled:
