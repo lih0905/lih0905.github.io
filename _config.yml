@@ -266,12 +266,12 @@ category_layout: "category.html"
 # <- default value
 #tag_layout: "tag.html" 
 # <- default value
-#category_archive:
-#  type: liquid
-#  path: /category/
-#tag_archive:
-#  type: liquid
-#  path: tag-archive.md
+category_archive:
+  type: liquid
+  path: /category/
+tag_archive:
+  type: liquid
+  path: /tags/
 # https://github.com/jekyll/jekyll-archives
 # jekyll-archives:
 #   enabled:
