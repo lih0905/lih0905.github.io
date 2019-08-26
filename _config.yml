@@ -262,9 +262,9 @@ category_layout: "category.html"
 # <- default value
 
 
-#tag_path: "tags" 
+tag_path: "tags" 
 # <- default value
-#tag_layout: "tag.html" 
+tag_layout: "tags.html" 
 # <- default value
 category_archive:
   type: liquid
