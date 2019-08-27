@@ -12,8 +12,8 @@ layout: default
 ---
 <ul class="posts-list">
   
-  {% assign tags = page.tag | default: page.title %}
-  {% for post in site.tags[tag] %}
+  {% assign tags = page.tags | default: page.title %}
+  {% for post in site.tags[tags] %}
 
     <li>
       <h3>
