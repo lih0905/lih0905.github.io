@@ -16,10 +16,10 @@ minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt"
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Newbie trying to learn NLP"
+title                    : "Trying to learn and understand NLP"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
-name                     : "Newbie trying to learn NLP"
+name                     : "Trying to learn and understand NLP"
 description              : "Explain what I learn about NLP"
 url                      : "https://lih0905.github.io" 
 baseurl                  : # the subpath of your site, e.g. "/blog"
