@@ -59,28 +59,95 @@ SOTA급 요약 모델들에서 발생하는 사실 관계 불일치 오류들을
 
 ![Fig.1]
 
-#### Paraphrasing
+#### Paraphrasing (의미 불변)
 
 NMT를 사용한 back translation을 이용, 영어 -> 다른 언어 -> 영어의 번역 과정을 통해 주어진 문장을 변환한다. 이 논문에서는 구글 번역 API를 사용하였다.
 
-#### Entity and Number swapping
+```python
+# translate to intermediate language and back
+claim_trans = self.translator.translate(claim.text, target_language=dst_lang, format_="text")
+claim_btrans = self.translator.translate(claim_trans["translatedText"], target_language=self.src_lang, format_="text")
+```
 
-SpaCy의 NER tagger를 이용하여 주어진 문장과 원본 문서의 모든 엔티티를 추출 후 이들을 이름 관련 엔티티와 숫자 관련 엔티티로 분류한다. 주어진 문장에서 엔티티를 찾아서, 이와 같은 분류에 속한 엔티티로 대체한다. 
+#### Entity and Number swapping (의미 가변)
 
-#### Pronoun swapping
+SpaCy의 NER tagger를 이용하여 주어진 문장과 원본 문서의 모든 엔티티를 추출 후 이들을 이름 관련 엔티티와 숫자 관련, 그리고 날짜 관련 엔티티로 분류한다. 주어진 문장에서 엔티티를 하나 선택한 후, 이와 같은 분류에 속한 문서의 엔티티로 대체한다. 
 
-잘못된 대명사 사용을 찾아내기 위해서 대명사 변환을 다음 로직으로 수행한다. 먼저 성별에 의존하는 대명사를 문장에서 추출한다. 다음으로 임의로 선택된 대명사를 다른 대명사로 변환한다. 이렇게 생성된 문장은 의미 가변으로 분류한다.
+```python
+text_ents = [ent for ent in text.ents if ent.label_ in self.categories]
+claim_ents = [ent for ent in claim.ents if ent.label_ in self.categories]
 
-#### Sentence negation
+# choose entity to replace and find possible replacement in source
+replaced_ent = random.choice(claim_ents)
+
+candidate_ents = [ent for ent in text_ents if ent.text != replaced_ent.text and ent.text not in replaced_ent.text and replaced_ent.text not in ent.text]
+swapped_ent = random.choice(candidate_ents)
+```
+
+#### Pronoun swapping (의미 가변) 
+
+잘못된 대명사 사용을 찾아내기 위해서 문장에 등장하는 대명사를 사전에 정의한 클래스 내의 다른 대명사로 변환한다.
+
+```python
+self.class2pronoun_map = {
+    "SUBJECT": ["you", "he", "she", "we", "they"],
+    "OBJECT": ["me", "you", "him", "her", "us", "them"],
+    "POSSESSIVE": ["my", "your", "his", "her", "its", "out", "your", "their"],
+    "REFLEXIVE": ["myself", "yourself", "himself", "itself", "outselves", "yourselves", "themselves"]
+}
+
+claim_pronouns = [token for token in claim if token.text.lower() in self.pronouns]
+
+# find pronoun replacement
+chosen_token = random.choice(claim_pronouns)
+chosen_class = self.pronoun2class_map[chosen_token.text.lower()]
+
+candidate_tokens = [token for token in self.class2pronoun_map[chosen_class] if token != chosen_token.text.lower()]
+
+# swap pronoun and update indices
+swapped_token = random.choice(candidate_tokens)
+```
+
+#### Sentence negation (의미 가변)
 
 부정 문장에 대해 학습하기 위해 부정 변환을 사용한다. 먼저 문장에서 조동사를 찾고, 그 중 하나를 반대 형으로 변환한다(긍정은 부정으로, 부정은 긍정으로). 
 
-#### Noise injection
+```python
+self.__negatable_tokens = ("are", "is", "was", "were", "have", "has", "had",
+                           "do", "does", "did", "can", "ca", "could", "may",
+                           "might", "must", "shall", "should", "will", "would")
+
+candidate_tokens = [token for token in claim if token.text in self.__negatable_tokens]
+
+# choose random token to negate
+negated_token = random.choice(candidate_tokens)
+negated_ix = negated_token.i
+
+# check whether token is negative
+is_negative = False
+if claim[negated_ix + 1].text in ["not", "n't"]:
+    is_negative = True
+
+# negate token
+claim_tokens = [token.text_with_ws for token in claim]
+if is_negative:
+    # delete next token (might be "not", "n't")
+    claim_tokens.pop(negated_ix + 1)
+else:
+    if claim[negated_ix].text.lower() in ["am", "may", "might", "must", "shall", "will"]:
+        negation = "not "
+    else:
+        negation = random.choice(["not ", "n't "])
+    # insert negation after the candidate token
+    claim_tokens.insert(negated_ix + 1, negation)
+```
+
+#### Noise injection (공통)
 
 신경망을 통해 생성된 요약문들은 여러가지 형태의 노이즈를 포함하고 있다. 사실 관계 파악 모델이 이런 오류에 강건해지도록 훈련 데이터에 의도적으로 노이즈를 더해주는데, 이는 각 토큰을 복제하거나 아니면 삭제하는 방식으로 구현한다.
 
 
-위 변한들의 구체적인 예시는 다음과 같다.
+위 변환들의 구체적인 예시는 다음과 같다.
 
 ![Table2]
 
@@ -94,6 +161,30 @@ SpaCy의 NER tagger를 이용하여 주어진 문장과 원본 문서의 모든 
 
 이 논문에서는 uncased BERT base 모델에 `문서/문장`을 입력으로 넣고 `[CLS]` 토큰 임베딩을 MLP에 통과시켜 `CONSISTENT/INCONSISTENT` 분류를 수행한다. 이 모델을 `FactCC`라고 하고, 여기에 추가로 실수가 발생할 수 있는 span을 판단하는 모델을 `FactCCX`라고 부른다. 
 
+```python
+class BertPointer(BertPreTrainedModel):
+    def __init__(self, config):
+        super(BertPointer, self).__init__(config)
+        self.num_labels = config.num_labels
+        self.bert = BertModel(config)
+
+        # classifiers
+        self.label_classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+
+    def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
+                position_ids=None, head_mask=None, 
+                ext_mask=None, ext_start_labels=None, ext_end_labels=None,
+                aug_mask=None, aug_start_labels=None, aug_end_labels=None,
+                loss_lambda=1.0):
+        # run through bert
+        bert_outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
+                                 attention_mask=attention_mask, head_mask=head_mask)
+
+        # label classifier
+        pooled_output = bert_outputs[1]
+        pooled_output = self.dropout(pooled_output)
+        label_logits = self.label_classifier(pooled_output)        
+```
 
 ## 4 Experiments
 
@@ -126,6 +217,17 @@ FactCC는 `(문서/문장)` 단위로 훈련되었음에도 불구하고 `(문�
 
 ### 5.1 Human Studies
 
+FactCCX 모델이 생성하는 하이라이트 구간의 효과를 확인해보기 위한 실험을 수행한다. CNN/DM 테스트셋에서 100개를 선정 후 모델을 통해 `(문서/요약문/하이라이트)` 형태로 생성한다. 이후 각 샘플마다 3명의 사람이 요약문의 사실 일치 여부 판단 과정에서 하이라이트된 구간이 도움이 되는지를 판단하도록 구성하였다. 그 결과, 문서에 포함된 하이라이트는 약 91.75% 의 평가자들이 도움이 된다고 응답하였으며, 요약문에 포함된 하이라이트는 약 81.33% 의 평가자들이 도움이 된다고 응답하였다. 
+
+![Table 6]
+
+이 과정에서 일부 평가자들의 성향에 따른 편향을 제거하기 위해 세 가지 방식으로 결과를 취합하였다.
+
+* Raw Data : 모든 데이터를 사용
+* Golden Aligned : 저자들이 직접 판단한 결과와 평가자들이 판단한 결과가 같은 데이터를 사용
+* Majority Aligned : 샘플마다 가장 많이 선택된 결과에 해당하는 데이터만 사용
+
+이런 식으로 필터링해봐도 결과에는 큰 차이가 없는 것으로 나타난다. 이외에도 평가자들이 먼저 하이라이트를 표시한 후 모델이 생성한 결과와 비교하는 실험도 수행하였으며, 이를 통해 모델이 생성한 하이라이트가 상당 부분 사람이 생성한 것과 겹치는 것을 확인하였다.
 
 ### 5.2 Qualitative Study
 
