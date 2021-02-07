@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Evaluating the Factual Consistency of Abstractive Text Summarization (요약 모델의 사실 관계 일치도 평가)"
 date: 2021-02-06 23:15:28 -0400
 categories: NLP
 tags:
