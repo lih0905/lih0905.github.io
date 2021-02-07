@@ -1,5 +1,5 @@
 ---
-title: "Evaluating the Factual Consistency of Abstractive Text Summarization (요약 모델의 사실 관계 일치도 평가)"
+title: "Evaluating the Factual Consistency of Abstractive Text Summarization (요약 모델의 사실 관계 일관성 평가)"
 date: 2021-02-06 23:15:28 -0400
 categories: NLP
 tags:
@@ -32,9 +32,9 @@ toc: false
 
 ## 2. Related Work
 
-* Goodrich et al. (2019) : 사실 관계 정확도를 원본 문서와 요약문에서 추출한 사실들 사이의 precision으로 정의함. 긍정적인 결과를 얻었으나, 부정문이나 유의어 등의 관계를 파악하지 못하는 단점이 있음
+* Goodrich et al. (2019) : 사실 관계 정확도를 원본 문서와 요약문에서 추출한 사실들 사이의 precision으로 정의함. 긍정적인 결과를 얻었으나, 부정문이나 유의어 등의 관계를 파악하지 못하는 단점이 있다.
 
-* Falke et al. (2019) : 요약문 생성에 beam search를 사용하여 여러 후보군을 생성한 뒤 요약문별 정확도 점수를 산출하여 가장 높은 후보를 반환함
+* Falke et al. (2019) : 요약문 생성에 beam search를 사용하여 여러 후보군을 생성한 뒤 요약문별 정확도 점수를 산출하여 가장 높은 후보를 반환한다.
 
 * Cao et al. (2018) : 듀얼 인코더를 사용, 각각 본문과 포함된 사실들을 인코딩한다. 생성 과정에서 디코더는 인코딩된 본문과 사실들 모두에 attend하여 사실들을 담아낼 수 있도록 강제한다.
 
@@ -43,7 +43,7 @@ toc: false
 
 SOTA급 요약 모델들에서 발생하는 사실 관계 불일치 오류들을 분석하며 알게된 것들은 다음과 같다.
 
-* 사실 관계 일치도를 체크하기 위해 요약문을 원본 문서의 각 문장들과 비교하는 것은 불충분한데, 이는 한 문장만 봤을 때는 의미가 모호할 수 있기 때문
+* 사실 관계 일치도를 체크하기 위해 요약문을 원본 문서의 각 문장들과 비교하는 것은 불충분한데, 이는 한 문장만 봤을 때는 의미가 모호할 수 있기 때문이다.
 * 요약 모델에서 발생하는 오류는 주로 고유명사나 숫자, 대명사 등을 잘못 사용하는 것이다. 반면 부정이나 일반 상식 오류는 잘 발생하지 않는다. 
 
 이들을 고려하여 저자는 '문서-문장' 단위의 사실 관계 확인 방식을 사용하고자 한다.
@@ -55,9 +55,11 @@ SOTA급 요약 모델들에서 발생하는 사실 관계 불일치 오류들을
 1. 먼저 요약 모델의 성능을 평가하기 위한 도메인에서 원본 문서들을 구축한다. 
 1. 하나의 문장을 샘플링한 후, 다양한 텍스트 변환에 통과시켜 '긍정' 혹은 '부정'로 분류되는 새로운 문장을 생성한다.
 
-이 과정에서 사용한 텍스트 변환들은 크게 의미 불변 변환들($$\mathcal{T}^+$$)과 의미 가변 변환($$\mathcal{T}^-$$)으로 나뉘며, 이를 사용해서 `CORRECT`와 `INCORRECT` 라벨이 붙은 새로운 문장들을 만들어 낸다. 이때 사용한 변환들은 다음과 같다.
+이 과정에서 사용한 텍스트 변환들은 크게 의미 불변 변환들($$\mathcal{T}^+$$)과 의미 변환 변환($$\mathcal{T}^-$$)으로 나뉘며, 이를 사용해서 `CORRECT`와 `INCORRECT` 라벨이 붙은 새로운 문장들을 만들어 낸다. 
 
 ![Fig.1](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/fig1.png?raw=true)
+
+이때 사용한 변환들은 다음과 같다.
 
 #### Paraphrasing (의미 불변)
 
@@ -69,7 +71,7 @@ claim_trans = self.translator.translate(claim.text, target_language=dst_lang, fo
 claim_btrans = self.translator.translate(claim_trans["translatedText"], target_language=self.src_lang, format_="text")
 ```
 
-#### Entity and Number swapping (의미 가변)
+#### Entity and Number swapping (의미 변환)
 
 SpaCy의 NER tagger를 이용하여 주어진 문장과 원본 문서의 모든 엔티티를 추출 후 이들을 이름 관련 엔티티와 숫자 관련, 그리고 날짜 관련 엔티티로 분류한다. 주어진 문장에서 엔티티를 하나 선택한 후, 이와 같은 분류에 속한 문서의 엔티티로 대체한다. 
 
@@ -84,7 +86,7 @@ candidate_ents = [ent for ent in text_ents if ent.text != replaced_ent.text and 
 swapped_ent = random.choice(candidate_ents)
 ```
 
-#### Pronoun swapping (의미 가변) 
+#### Pronoun swapping (의미 변환) 
 
 잘못된 대명사 사용을 찾아내기 위해서 문장에 등장하는 대명사를 사전에 정의한 클래스 내의 다른 대명사로 변환한다.
 
@@ -108,7 +110,7 @@ candidate_tokens = [token for token in self.class2pronoun_map[chosen_class] if t
 swapped_token = random.choice(candidate_tokens)
 ```
 
-#### Sentence negation (의미 가변)
+#### Sentence negation (의미 변환)
 
 부정 문장에 대해 학습하기 위해 부정 변환을 사용한다. 먼저 문장에서 조동사를 찾고, 그 중 하나를 반대 형으로 변환한다(긍정은 부정으로, 부정은 긍정으로). 
 
@@ -153,13 +155,13 @@ else:
 
 ### 3.2 Development and test data
 
-훈련 데이터와는 다르게 평가 및 테스트 데이터셋은 직접 구축하였다. 먼저 SOTA 요약 모델을 이용하여 요약문을 생성한 뒤, `(문서, 문장)` 쌍을 직접 저자들이 검증하여 라벨을 붙였다. 이렇게 구축된 데이터셋은 평가셋 931개, 테스트셋 503개이다. 
+훈련 데이터와는 다르게 평가 및 테스트 데이터셋은 직접 구축하였다. 먼저 SOTA 요약 모델을 이용하여 요약문을 생성한 뒤, `(문서, 요약문)` 쌍을 직접 저자들이 검증하여 라벨을 붙였다. 이렇게 구축된 데이터셋은 평가셋 931개, 테스트셋 503개이다. 
 
 크라우드 소싱 등으로 더 많은 데이터를 구축하려고 하였으나, 결과물의 질이 너무 낮아서 사용하지 않기로 하였다. 
 
 ### 3.3 Models
 
-이 논문에서는 uncased BERT base 모델에 `문서/문장`을 입력으로 넣고 `[CLS]` 토큰 임베딩을 MLP에 통과시켜 `CONSISTENT/INCONSISTENT` 분류를 수행한다. 이 모델을 `FactCC`라고 하고, 여기에 추가로 실수가 발생할 수 있는 span을 판단하는 모델을 `FactCCX`라고 부른다. 
+이 논문에서는 uncased BERT base 모델에 `(문서, 요약문)`을 입력으로 넣고 `[CLS]` 토큰 임베딩을 MLP에 통과시켜 `CONSISTENT/INCONSISTENT` 분류를 수행한다. 이 모델을 `FactCC`라고 하고, 여기에 추가로 실수가 발생할 수 있는 span을 판단하는 모델을 `FactCCX`라고 부른다. 
 
 ```python
 class BertPointer(BertPreTrainedModel):
@@ -210,14 +212,14 @@ class BertPointer(BertPreTrainedModel):
 
 ![Table 5](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb5.png?raw=true)
 
-FactCC는 `(문서/문장)` 단위로 훈련되었음에도 불구하고 `(문장/문장)` 태스크에서도 만족스러운 결과를 내고 있다.
+FactCC는 `(문서, 문장)` 단위로 훈련되었음에도 불구하고 `(문장, 문장)` 태스크에서도 만족스러운 결과를 내고 있다.
 
 
 ## 5 Analysis
 
 ### 5.1 Human Studies
 
-FactCCX 모델이 생성하는 하이라이트 구간의 효과를 확인해보기 위한 실험을 수행한다. CNN/DM 테스트셋에서 100개를 선정 후 모델을 통해 `(문서/요약문/하이라이트)` 형태로 생성한다. 이후 각 샘플마다 3명의 사람이 요약문의 사실 일치 여부 판단 과정에서 하이라이트된 구간이 도움이 되는지를 판단하도록 구성하였다. 그 결과, 문서에 포함된 하이라이트는 약 91.75% 의 평가자들이 도움이 된다고 응답하였으며, 요약문에 포함된 하이라이트는 약 81.33% 의 평가자들이 도움이 된다고 응답하였다. 
+FactCCX 모델이 생성하는 하이라이트 구간의 효과를 확인해보기 위한 실험을 수행한다. CNN/DM 테스트셋에서 100개를 선정 후 모델을 통해 `(문서, 요약문, 하이라이트)` 형태로 생성한다. 이후 각 샘플마다 3명의 사람이 요약문의 사실 일치 여부 판단 과정에서 하이라이트된 구간이 도움이 되는지를 판단하도록 구성하였다. 그 결과, 문서에 포함된 하이라이트는 약 91.75% 의 평가자들이 도움이 된다고 응답하였으며, 요약문에 포함된 하이라이트는 약 81.33% 의 평가자들이 도움이 된다고 응답하였다. 
 
 ![Table 6](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb6.png?raw=true)
 
