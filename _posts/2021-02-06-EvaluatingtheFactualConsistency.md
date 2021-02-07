@@ -9,7 +9,7 @@ tags:
   - Summarization
 
 use_math: true
-#toc: false
+toc: false
 ---
 
   * 논문 제목 : [Evaluating the Factual Consistency of Abstractive Text Summarization, Kryściński et al. (2020)](https://www.aclweb.org/anthology/2020.emnlp-main.750.pdf) 
@@ -55,7 +55,7 @@ SOTA급 요약 모델들에서 발생하는 사실 관계 불일치 오류들을
 1. 먼저 요약 모델의 성능을 평가하기 위한 도메인에서 원본 문서들을 구축한다. 
 1. 하나의 문장을 샘플링한 후, 다양한 텍스트 변환에 통과시켜 '긍정' 혹은 '부정'로 분류되는 새로운 문장을 생성한다.
 
-이 과정에서 사용한 텍스트 변환들은 크게 의미 불변 변환들($\mathcal{T}^+$)과 의미 가변 변환($\mathcal{T}^-$)으로 나뉘며, 이를 사용해서 `CORRECT`와 `INCORRECT` 라벨이 붙은 새로운 문장들을 만들어 낸다. 이때 사용한 변환들은 다음과 같다.
+이 과정에서 사용한 텍스트 변환들은 크게 의미 불변 변환들($$\mathcal{T}^+$$)과 의미 가변 변환($$\mathcal{T}^-$$)으로 나뉘며, 이를 사용해서 `CORRECT`와 `INCORRECT` 라벨이 붙은 새로운 문장들을 만들어 낸다. 이때 사용한 변환들은 다음과 같다.
 
 ![Fig.1](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/fig1.png?raw=true)
 
