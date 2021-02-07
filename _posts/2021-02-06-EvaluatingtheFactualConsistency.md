@@ -26,7 +26,7 @@ use_math: true
 
 논문은 이 중에서 원본 문서와 생성된 요약 사이의 사실 관계 일관성에 대해 다루고 있다. 최근 연구에 따르면 추상 요약 모델이 생성한 요약문의 약 30% 가 사실 관계에서 일치하지 않았으며, 이로 인해 요약 모델의 실제 활용에 큰 제약으로 나타나고 있다.
 
-![Table 1]
+![Table 1](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb1.png?raw=true)
 
 저자진은 BERT를 기반으로 사실 관계 일관성을 판단하는 weakly-supervised 모델을 제안한다. 훈련 데이터는 원본 문서에 규칙 기반 변환을 여러번 적용하여 생성하였다.
 
@@ -57,7 +57,7 @@ SOTA급 요약 모델들에서 발생하는 사실 관계 불일치 오류들을
 
 이 과정에서 사용한 텍스트 변환들은 크게 의미 불변 변환들($\mathcal{T}^+$)과 의미 가변 변환($\mathcal{T}^-$)으로 나뉘며, 이를 사용해서 `CORRECT`와 `INCORRECT` 라벨이 붙은 새로운 문장들을 만들어 낸다. 이때 사용한 변환들은 다음과 같다.
 
-![Fig.1]
+![Fig.1](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/fig1.png?raw=true)
 
 #### Paraphrasing (의미 불변)
 
@@ -149,7 +149,7 @@ else:
 
 위 변환들의 구체적인 예시는 다음과 같다.
 
-![Table2]
+![Table2](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb2.png?raw=true)
 
 ### 3.2 Development and test data
 
@@ -200,7 +200,7 @@ class BertPointer(BertPreTrainedModel):
 
 생성한 데이터셋이 사실 관계 일치도에 어떠한 영향을 주는지 확인하기 위하여, BERT를 기반으로 [MNLI entailment 데이터](https://cims.nyu.edu/~sbowman/multinli/)와 [FEVER 사실 확인 데이터](https://fever.ai/resources.html)를 이용하여 훈련시킨 모델들을 FactCC/FactCCX 모델과 비교한다.
 
-![Table 3]
+![Table 3](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb3.png?raw=true)
 
 그 결과, CNN/DM 테스트셋에서는 FactCC/FactCCX 모델이 MNLI/FEVER 기반으로 훈련시킨 모델에 비해 훨씬 뛰어난 성능을 보이지만, Xsum 테스트셋에서는 MNLI 모델이 가장 뛰어난 결과를 보인다. 
 
@@ -208,7 +208,7 @@ class BertPointer(BertPreTrainedModel):
 
 다른 NLI 모델들과 사실 관계 일치도에 비교해보기 위해서 문장별 순위 산출 실험을 진행하였다(Falke et al. (2019)). 이 실험은 기사 문장 하나마다 긍정/부정 문장이 하나씩 쌍으로 주어진다. 목표는 모델이 긍정 문장에 보다 높은 확률을 부여하는 것이다. 
 
-![Table 5]
+![Table 5](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb5.png?raw=true)
 
 FactCC는 `(문서/문장)` 단위로 훈련되었음에도 불구하고 `(문장/문장)` 태스크에서도 만족스러운 결과를 내고 있다.
 
@@ -219,7 +219,7 @@ FactCC는 `(문서/문장)` 단위로 훈련되었음에도 불구하고 `(문�
 
 FactCCX 모델이 생성하는 하이라이트 구간의 효과를 확인해보기 위한 실험을 수행한다. CNN/DM 테스트셋에서 100개를 선정 후 모델을 통해 `(문서/요약문/하이라이트)` 형태로 생성한다. 이후 각 샘플마다 3명의 사람이 요약문의 사실 일치 여부 판단 과정에서 하이라이트된 구간이 도움이 되는지를 판단하도록 구성하였다. 그 결과, 문서에 포함된 하이라이트는 약 91.75% 의 평가자들이 도움이 된다고 응답하였으며, 요약문에 포함된 하이라이트는 약 81.33% 의 평가자들이 도움이 된다고 응답하였다. 
 
-![Table 6]
+![Table 6](https://github.com/lih0905/lih0905.github.io/blob/master/_posts/images/210206/tb6.png?raw=true)
 
 이 과정에서 일부 평가자들의 성향에 따른 편향을 제거하기 위해 세 가지 방식으로 결과를 취합하였다.
 
