@@ -1,3 +1,17 @@
+---
+title: "집현전 스터디 2기 최신반 3조 논문 리스트"
+date: 2021-06-05 23:15:28 -0400
+categories: NLP
+tags:
+  - Paper review
+  - Deep Learning
+  - NLP
+  - Dialogue System
+
+use_math: false
+toc: false
+---
+
 # 집현전 스터디 2기 최신반 3조 논문 리스트
 
 ## 배경 지식
